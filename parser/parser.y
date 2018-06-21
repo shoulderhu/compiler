@@ -13,13 +13,20 @@
 
 %token IDENTIFIER // identifer
 %token NUMBER     // number
+%token INTEGER    // integer
+%token FLOATING   // floating
+%token CHARACTER  // character
 %token STRING     // string
+%token PERIOD     // .
+%token POINTER    // ->
 %token COMMA      // ,
 %token COLON      // :
 %token SEMI       // ;
 %left  PLUS MINUS     // + -
 %left  MUL DIV        // * /
 %token MOD        // %
+%token DPLUS      // ++
+%token DMINUS     // --
 %token ASSIGN     // =
 %token EQUAL      // ==
 %left  NOTEQUAL   // !=
@@ -373,7 +380,7 @@ jump_statement // rule #58
 
 declaration_specifiers // by rule #3, #41
     : declaration_specifier
-    | declaration_specifier declaration_specifiers
+    | declaration_specifiers declaration_specifier
     ;
 
 declarations // {declaration}* by rule #3, #52
@@ -383,12 +390,12 @@ declarations // {declaration}* by rule #3, #52
 
 specifier_qualifiers // {specifier_qualifier}+ by rule #38
     : specifier_qualifier
-    | specifier_qualifier specifier_qualifiers
+    | specifier_qualifiers specifier_qualifier
     ;
 
 init_declarators // by rule #48
     : init_declarator
-    | init_declarator init_declarators
+    | init_declarators init_declarator
     ;
 
 statements // by rule #52
@@ -401,14 +408,18 @@ statements // by rule #52
                     Epilogue
 **************************************************/
 
-int main(int argc, char *argv[]) {
+main(int argc, char *argv[]) {
 
+    extern FILE *yyin;
+
+    yyin = fopen(argv[0], "r");
+    yydebug = 1;
     yyparse();
     return 0;
 }
 
-void yyerror(char *msg) {
+yyerror(char *e) {
 
-    printf("%s\n", msg);
+    printf("%s\n", e);
     exit(0);
 }
