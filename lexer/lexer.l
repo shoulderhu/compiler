@@ -7,100 +7,104 @@
 #include "parser\parser.tab.h"
 %}
 
-
+DIGIT       [0-9]
+LETTER      [A-Za-z]
+IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|_)*
+INTEGER     {DIGIT}+
+FLOATING    -?{DIGIT}*\.{DIGIT}+
+STRING      {LETTER}?\"(\\.|[^\\"])*\"
+SPACE       [ \t]+
 
 /**************************************************
                     Flex definitions
 **************************************************/
-//%option noyywrap // C++ compatibility
-
-/*
-%token IDENTIFIER // identifer
-%token NUMBER     // number
-%token STRING     // string
-%token COMMA      // ,
-%token COLON      // :
-%token SEMI       // ;
-%left  PLUS MINUS     // + -
-%left  MUL DIV        // * /
-%token MOD        // %
-%token ASSIGN     // =
-%token EQUAL      // ==
-%left  NOTEQUAL   // !=
-%left  LESS       // <
-%token LTEQUAL    // <=
-%left  GREATER    // >
-%token GTEQUAL    // >=
-%token SHIFTL     // <<
-%token SHIFTR     // >>
-%token PLUSASN    // +=
-%token MINUSASN   // -=
-%token MULASN     // *=
-%token DIVASN     // /=
-%token MODASN     // %=
-%token SHLASN     // <<=
-%token SHRASN     // >>=
-%token ANDASN     // &=
-%token XORASN     // ^=
-%token ORASN      // |=
-%token AND        // &&
-%token OR         // ||
-%token NOT        // !
-%token COMPL      // ~
-%token BITAND     // &
-%token BITOR      // |
-%token BITXOR     // ^
-%token QUESTION   // ?
-%token LPAREN     // (
-%token RPAREN     // )
-%token LBRACKET   // [
-%token RBEACKET   // ]
-%token LCURLY     // {
-%token RCURLY     // }
-*/
 
 
 /**************************************************
                     Grammar rules
 **************************************************/
 %%
+","           { return COMMA; }
+":"           { return COLON; }
+";"           { return SEMI; }
+"+"           { return PLUS; }
+"-"           { return MINUS; }
+"*"           { return MUL; }
+"/"           { return DIV; }
+"%"           { return MOD; }
+"="           { return ASSIGN; }
+"=="          { return EQUAL; }
+"!="          { return NOTEQUAL; }
+"<"           { return LESS; }
+"<="          { return LTEQUAL; }
+">"           { return GREATER; }
+">="          { return GTEQUAL; }
+"<<"          { return SHIFTL; }
+">>"          { return SHIFTR; }
+"+="          { return PLUSASN; }
+"-="          { return MINUSASN; }
+"*="          { return MULASN; }
+"/="          { return DIVASN; }
+"%="          { return MODASN; }
+"<<="         { return SHLASN; }
+">>="         { return SHRASN; }
+"&="          { return ANDASN; }
+"^="          { return XORASN; }
+"|="          { return ORASN; }
+"&&"          { return AND; }
+"||"          { return OR; }
+"!"           { return NOT; }
+"~"           { return COMPL; }
+"&" 　　　　　 { return BITAND; }
+"|"           { return BITOR; }
+"^"           { return BITXOR; }
+"?"           { return QUESTION; }
+"("           { return LPAREN; }
+")"           { return RPAREN; }
+"["           { return LBRACKET; }
+"]"           { return RBRACKET; }
+"{"           { return LCURLY; }
+"}"           { return RCURLY; }
 
+"auto"        { return AUTO; }
+"break"       { return BREAK; }
+"case"        { return CASE; }
+"char"        { return CHAR; }
+"const"       { return CONST; }
+"continue"    { return CONTINUE; }
+"default"     { return DEFAULT; }
+"do"          { return DO; }
+"double"      { return DOUBLE; }
+"else"        { return ELSE; }
+"enum"        { return ENUM; }
+"extern"      { return EXTERN; }
+"float"       { return FLOAT; }
+"for"         { return FOR; }
+"goto"        { return GOTO; }
+"if"          { return IF; }
+"inline"      { return INLINE; }
+"int"         { return INT; }
+"long"        { return LONG; }
+"register"    { return REGISTER; }
+"restrict"    { return RESTRICT; }
+"return"      { return RETURN; }
+"short"       { return SHORT; }
+"signed"      { return SIGNED; }
+"sizeof"      { return SIZEOF; }
+"static"      { return STATIC; }
+"struct"      { return STRUCT; }
+"switch"      { return SWITCH; }
+"typedef"     { return TYPEDEF; }
+"union"       { return UNION; }
+"unsigned"    { return UNSIGNED; }
+"void"        { return VOID); }
+"volatile"    { return VOLATILE); }
+"while"       { return WHILE); }
 
-
-auto        { return(AUTO); }
-break       { return(BREAK); }
-case        { return(CASE); }
-char        { return(CHAR); }
-const       { return(CONST); }
-continue    { return(CONTINUE); }
-default     { return(DEFAULT); }
-do          { return(DO); }
-double      { return(DOUBLE); }
-else        { return(ELSE); }
-enum        { return(ENUM); }
-extern      { return(EXTERN); }
-float       { return(FLOAT); }
-for         { return(FOR); }
-goto        { return(GOTO); }
-if          { return(IF); }
-inline      { return(INLINE); }
-int         { return(INT); }
-long        { return(LONG); }
-register    { return(REGISTER); }
-restrict    { return(RESTRICT); }
-return      { return(RETURN); }
-short       { return(SHORT); }
-signed      { return(SIGNED); }
-sizeof      { return(SIZEOF); }
-static      { return(STATIC); }
-struct      { return(STRUCT); }
-switch      { return(SWITCH); }
-typedef     { return(TYPEDEF); }
-union       { return(UNION); }
-unsigned    { return(UNSIGNED); }
-void        { return(VOID); }
-volatile    { return(VOLATILE); }
-while       { return(WHILE); }
+{IDENTIFIER}   { return IDENTIFIER; }
+{INTEGER}     { return INTEGER; }
+{FLOATING}    { return FLOATING; }
+{STRING}      { return STRING; }
 %%
 
 /**************************************************
