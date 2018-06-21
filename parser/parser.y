@@ -29,9 +29,20 @@
 %token GTEQUAL    // >=
 %token SHIFTL     // <<
 %token SHIFTR     // >>
+%token PLUSASN    // +=
+%token MINUSASN   // -=
+%token MULASN     // *=
+%token DIVASN     // /=
+%token MODASN     // %=
+%token SHLASN     // <<=
+%token SHRASN     // >>=
+%token ANDASN     // &=
+%token XORASN     // ^=
+%token ORASN      // |=
 %token AND        // &&
 %token OR         // ||
 %token NOT        // !
+%token COMPL      // ~
 %token BITAND     // &
 %token BITOR      // |
 %token BITXOR     // ^
@@ -183,7 +194,7 @@ and_expression // rule #23
     | and_expression BITAND equality_expression
     ;
 
-equality_expresssion // rule #24
+equality_expression // rule #24
     : relational_expression
     | equality_expression EQUAL relational_expression
     ;
@@ -234,23 +245,155 @@ primary_expression // rule #32
     | LPAREN expression RPAREN
     ;
 
-expression // rule #33
+expression // rule #34
     : assignment_expression
     | expression COMMA assignment_expression
     ;
 
-assignment_expression // rule #34
-    :
-
-
-declaration_specifiers // {declaration_specifier}*
-    : declaration_specifier
-    | declaration_specifiers declaration_specifier
+assignment_expression // rule #35
+    : conditional_expression
+    | unary_expression assignment_operator assignment_expression
     ;
 
-declarations // {declaration}*
+assignment_operator // rule #36
+    : ASSIGN
+    | MULASN
+    | DIVASN
+    | MODASN
+    | PLUSASN
+    | MINUSASN
+    | SHLASN
+    | SHRASN
+    | ANDASN
+    | XORASN
+    | ORASN
+    ;
+
+unary_operator // rule #37
+    : BITAND
+    | MUL
+    | PLUS
+    | MINUS
+    | COMPL
+    | NOT
+    ;
+
+type_name // rule #38
+    : specifier_qualifiers
+    ;
+
+parameter_type_list // rule #39
+    : parameter_list
+    ;
+
+parameter_list // rule #40
+    : parameter_declaration
+    | parameter_list COMMA parameter_declaration
+    ;
+
+parameter_declaration // rule #41
+    : declaration_specifiers
+    | declaration_specifiers declarator
+    ;
+
+declaration // rule #48
+    : declaration_specifiers SEMI
+    | declaration_specifiers init_declarators SEMI
+    ;
+
+init_declarator // rule #49
+    : declarator
+    | declarator ASSIGN initializer
+    ;
+
+initializer // rule #50
+    : assignment_expression
+    | LCURLY initializer_list RCURLY
+    | LCURLY initializer_list COMMA RCURLY
+    ;
+
+initializer_list // rule #51
+    : initializer
+    | initializer_list COMMA initializer
+    ;
+
+compound_statement // rule #52
+    : LCURLY RCURLY
+    | LCURLY statements RCURLY
+    | LCURLY declarations RCURLY
+    | LCURLY declarations statements RCURLY
+    ;
+
+statement // rule #53
+    : labeled_statement
+    | expression_statement
+    | compound_statement
+    | selection_statement
+    | iteration_statement
+    | jump_statement
+    ;
+
+labeled_statement // rule #54
+    : IDENTIFIER COLON statement
+    | CASE constant_expression COLON statement
+    | DEFAULT COLON statement
+    ;
+
+expression_statement // rule #55
+    : SEMI
+    | expression SEMI
+    ;
+
+selection_statement // rule #56
+    : IF LPAREN expression RPAREN statement
+    | IF LPAREN expression RPAREN statement ELSE statement
+    | SWITCH LPAREN expression RPAREN statement
+    ;
+
+iteration_statement // rule #57
+    : WHILE LPAREN expression RPAREN statement
+    | DO statement WHILE LPAREN expression RPAREN SEMI
+    | FOR LPAREN SEMI SEMI RPAREN statement
+    | FOR LPAREN SEMI SEMI expression RPAREN statement
+    | FOR LPAREN SEMI expression SEMI RPAREN statement
+    | FOR LPAREN SEMI expression SEMI expression RPAREN statement
+    | FOR LPAREN expression SEMI SEMI RPAREN statement
+    | FOR LPAREN expression SEMI SEMI expression RPAREN statement
+    | FOR LPAREN expression SEMI expression SEMI RPAREN statement
+    | FOR LPAREN expression SEMI expression SEMI expression RPAREN statement
+    ;
+
+jump_statement // rule #58
+    : GOTO IDENTIFIER SEMI
+    | CONTINUE SEMI
+    | BREAK SEMI
+    | RETURN SEMI
+    | RETURN expression SEMI
+    ;
+
+declaration_specifiers // by rule #3, #41
+    : declaration_specifier
+    | declaration_specifier declaration_specifiers
+    ;
+
+declarations // {declaration}* by rule #3, #52
     : declaration
     | declarations declaration
+    ;
+
+specifier_qualifiers // {specifier_qualifier}+ by rule #38
+    : specifier_qualifier
+    | specifier_qualifier specifier_qualifiers
+    ;
+
+init_declarators // by rule #48
+    : init_declarator
+    | init_declarator init_declarators
+    ;
+
+statements // by rule #52
+    : statement
+    | statements statement
     ;
 %%
 
