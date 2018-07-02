@@ -4,6 +4,7 @@ import compiler.Parser;
 import compiler.Scanner;
 import compiler.Sym;
 import compiler.Symbol;
+import javafx.stage.FileChooser;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -14,9 +15,12 @@ import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.awt.event.WindowEvent;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 import static gui.Main.frame;
 
@@ -69,6 +73,9 @@ public class Action extends AbstractAction {
             case "Parser":
                 parse();
                 break;
+            case "Close":
+                close();
+                break;
         }
     }
 
@@ -109,8 +116,28 @@ public class Action extends AbstractAction {
         }
     }
 
-    private void save() {
-
+    private void save()  {
+    	try {
+    		JFileChooser fileChooser = new JFileChooser();
+    		fileChooser.setDialogTitle("Specify a file to save");   
+    		JTabbedPane tabbedPane = frame.getTFile();
+    		JTextArea textArea = Text.getTextArea(tabbedPane);
+            
+    		int userSelection = fileChooser.showSaveDialog(tabbedPane);
+    		 
+    		if (userSelection == JFileChooser.APPROVE_OPTION) {
+    		    File fileToSave = fileChooser.getSelectedFile();
+    		    PrintStream out = new PrintStream(fileToSave);
+    		    String Code_content=textArea.getText();
+    		    out.print(Code_content);
+    		    System.out.println("Save as file: " + fileToSave.getAbsolutePath());
+    		    out.close();
+    		}
+    		
+    	}catch(Exception e) {
+    		JOptionPane.showMessageDialog(null, e);
+    	}
+    	
     }
 
     private void scan() {
@@ -180,6 +207,12 @@ public class Action extends AbstractAction {
 
 
     }
+    private  void close(){
+    	JTabbedPane tabbedPane = frame.getTFile();
+    	int selectedindex=tabbedPane.getSelectedIndex();
+    	tabbedPane.remove(selectedindex);
+    }
+
 }
 
 

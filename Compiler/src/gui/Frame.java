@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -12,7 +13,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
     
     private JMenuBar menuBar;
     private JToolBar toolBar;
-    private JTabbedPane tabFile, tabOut;
+    private JTabbedPane tabFile, tabOut,tabAssem;
     private JComboBox<Integer> comboBoxSize;
     private JPanel panel;
     private JMenu menu, menu2;
@@ -36,6 +37,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
         menuFile();
         menuEdit();
         menuTest();
+        menuCompile();
         toolFont();
 
         this.setJMenuBar(menuBar);
@@ -45,7 +47,8 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
         this.getContentPane().add(tabFile, BorderLayout.CENTER);
 
         tabOut = new JTabbedPane();
-        tabOut.addTab("Test", Text.setTextArea(false, ""));
+        tabOut.addTab("Result", Text.setTextArea(false, ""));
+        tabOut.addTab("Assembly", Text.setTextArea(false, ""));
         this.getContentPane().add(tabOut, BorderLayout.SOUTH);
 
         //JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, tabFile, tabOut);
@@ -62,6 +65,8 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
         Action actionOpen = new Action("Open", Icons.OPEN.getImage(), 'O');
         Action actionSave = new Action("Save", Icons.SAVE.getImage(), 'S');
         Action actionClose = new Action("Close", Icons.CLOSE.getImage(), 'W');
+
+
 
         JMenu menu = new JMenu("File");
         menu.add(actionNew);
@@ -83,6 +88,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
         Action actionCopy = new Action("Copy", Icons.COPY.getImage(), 'C');
         Action actionPaste = new Action("Paste", Icons.PASTE.getImage(), 'V');
 
+
         JMenu menu = new JMenu("Edit");
         menu.add(actionCut);
         menu.add(actionCopy);
@@ -94,6 +100,17 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
         toolBar.add(actionPaste.getButton());
         toolBar.addSeparator();
     }
+    private void menuCompile(){
+        Action actionRun =new Action("Run",Icons.TEST.getImage(),' ');
+        JMenu menu = new JMenu("Build");
+        menu.add(actionRun);;
+        menuBar.add(menu);
+        toolBar.add(actionRun.getButton());
+        toolBar.addSeparator();
+
+
+    }
+
 
     private void menuTest() {
 
