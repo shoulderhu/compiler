@@ -13,6 +13,10 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.WindowEvent;
@@ -192,14 +196,40 @@ public class Action extends AbstractAction {
     }
 
     private void cut() {
+    	String ret = "";
+        Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-        System.out.println(Text.getTextArea(frame.getTFile()).getFont().getSize());
+        Transferable clipTf = sysClip.getContents(null);
+
+        if (clipTf != null) {
+
+            if (clipTf.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                try {
+                    ret = (String) clipTf
+                            .getTransferData(DataFlavor.stringFlavor);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        JTabbedPane tabbedPane = frame.getTFile();
+    	JTextArea textArea = Text.getTextArea(tabbedPane);
+        
 
     }
 
 
     private void copy() {
-
+    	JTabbedPane tabbedPane = frame.getTFile();
+    	JTextArea textArea = Text.getTextArea(tabbedPane);
+        
+    	if (textArea.getSelectedText() != null) { // See if they selected something 
+            String s = textArea.getSelectedText();
+            Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable tText = new StringSelection(textArea.getText());
+            clip.setContents(tText, null);
+        }
+    	
 
     }
 
