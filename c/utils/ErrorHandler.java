@@ -10,7 +10,7 @@ public class ErrorHandler {
 
     public ErrorHandler(String progid) {
         programId = progid;
-        stream = System.err;
+        stream = System.out;
     }
 
     public ErrorHandler(String progid, OutputStream stream) {
