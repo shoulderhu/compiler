@@ -4,14 +4,9 @@ import compiler.Parser;
 import compiler.Scanner;
 import compiler.Sym;
 import compiler.Symbol;
-import javafx.stage.FileChooser;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
-import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -19,17 +14,14 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
-import java.awt.event.WindowEvent;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
-import static gui.Main.frame;
+import static gui.src.Main.frame;
 
 public class Action extends AbstractAction {
-
+    private static String Savepath;
+    private static String SaveName;
+    private static boolean isSave=false;
     public Action(String name, Icon icon, char key) {
 
         super(name, icon);
@@ -80,14 +72,181 @@ public class Action extends AbstractAction {
             case "Close":
                 close();
                 break;
+            case "Compile":
+                compile(save());
+                break;
+            case "Assembly":
+                assembly(save());
+                break;
+            case "Execute":
+                execute(save());
+                break;
+            case "Tokens":
+                tokens(save());
+                break;
+
+            case "IR":
+                ir(save());
+                break;
+            case "Compile&Run":
+                compile(save());
+                execute(save());
+                break;
+
+        }
+    }
+    private void ir(String filepath) {
+        Runtime runtime = Runtime.getRuntime();
+        JTabbedPane tabbedOut = frame.getTOut();
+
+        try {
+            filepath=Savepath+"/"+SaveName;
+            Process process = runtime.exec("./src/gui/c_dump_ir "+filepath);
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            String string="",res=null;
+
+            while((string = bufferedReader.readLine()) != null ) {
+                if(string!=null)
+                    res+=string+'\n';
+                System.out.println(string);
+            }
+            if(string==null)
+                tabbedOut.add("IR", new Tab_textarea.TextDemoPanel(res));
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+    }
+
+
+    private void tokens(String filepath) {
+        Runtime runtime = Runtime.getRuntime();
+        JTabbedPane tabbedOut = frame.getTOut();
+
+        try {
+            filepath=Savepath+"/"+SaveName;
+            Process process = runtime.exec("./src/gui/c_dump_tokens "+filepath);
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            String string,res=null;
+
+            while((string = bufferedReader.readLine()) != null ) {
+                res+=string+'\n';
+                System.out.println(string);
+            }
+            if(string==null)
+                tabbedOut.add("Tokens", new Tab_textarea.TextDemoPanel(res));
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+    }
+
+    private void execute(String filepath) {
+        JTabbedPane tabbedOut = frame.getTOut();
+
+        try {
+            String[] name=SaveName.split("\\.");
+            filepath="./"+name[0];
+            Runtime runtime = Runtime.getRuntime();
+            Process process = runtime.exec(filepath);
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            String string="",ans="";
+
+            while((string = bufferedReader.readLine()) != null ) {
+                if(string!=null)
+                    ans=ans+(string+'\n');
+                System.out.println(string);
+            }
+            for (int i = 0; i < tabbedOut.getTabCount(); i++) {
+                String tabTitle = tabbedOut.getTitleAt(i);
+                if (tabTitle.equals("Result")) {
+                    tabbedOut.remove(i);
+                    break;
+                }
+            }
+            tabbedOut.addTab("Result", new Tab_textarea.TextDemoPanel(ans));
+
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
         }
     }
 
-    private void newf() {
+    private void assembly(String filepath) {
 
+        JTabbedPane tabbedOut = frame.getTOut();
+
+        try {
+            String[] name=SaveName.split("\\.");
+            filepath="./"+name[0]+".s";
+            File asm = new File(filepath);
+
+            BufferedReader file = new BufferedReader(new FileReader(asm));
+            String string,res="";
+
+            while((string = file.readLine()) != null) {
+                res+=string+'\n';
+                System.out.println(string);
+            }
+            tabbedOut.addTab("Assembly", new Tab_textarea.TextDemoPanel(res));
+
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+    }
+
+    private void compile(String filepath){
+        Runtime runtime = Runtime.getRuntime();
+        JTabbedPane tabbedOut = frame.getTOut();
+
+        try {
+            Process process = runtime.exec("./src/gui/c "+filepath);
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            String string;
+
+            while((string = bufferedReader.readLine()) != null ) {
+                System.out.println(string);
+            }
+            for (int i = 0; i < tabbedOut.getTabCount(); i++) {
+                String tabTitle = tabbedOut.getTitleAt(i);
+                if (tabTitle.equals("Result")) {
+                    tabbedOut.remove(i);
+                    break;
+                }
+            }
+                tabbedOut.add("Result", new Tab_textarea.TextDemoPanel("Success Compile .."));
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+    }
+
+    private void newf() {
         JTabbedPane tabbedPane = frame.getTFile();
         tabbedPane.addTab("file" + (tabbedPane.getTabCount() + 1),
                 Text.setTextArea(true, ""));
+
+        Text.getTextArea(tabbedPane).setTabSize(2);
+        Font font = Text.getTextArea(tabbedPane).getFont();
+        Text.getTextArea(tabbedPane).setFont(new Font(font.getFontName(), font.getStyle(), 24));
     }
 
     private void open() {
@@ -109,6 +268,9 @@ public class Action extends AbstractAction {
                 JTabbedPane tabbedPane = frame.getTFile();
                 tabbedPane.addTab(chooser.getSelectedFile().getName(),
                         Text.setTextArea(true, str));
+                Font font = Text.getTextArea(tabbedPane).getFont();
+                Text.getTextArea(tabbedPane).setFont(new Font(font.getFontName(), font.getStyle(), 24));
+                Text.getTextArea(tabbedPane).setTabSize(2);
                 tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
 
                 stream.close();
@@ -120,28 +282,35 @@ public class Action extends AbstractAction {
         }
     }
 
-    private void save()  {
+    private String save()  {
+        if(isSave&&Savepath!=null){
+            return Savepath;
+        }
     	try {
     		JFileChooser fileChooser = new JFileChooser();
     		fileChooser.setDialogTitle("Specify a file to save");   
     		JTabbedPane tabbedPane = frame.getTFile();
     		JTextArea textArea = Text.getTextArea(tabbedPane);
-            
+
     		int userSelection = fileChooser.showSaveDialog(tabbedPane);
-    		 
-    		if (userSelection == JFileChooser.APPROVE_OPTION) {
-    		    File fileToSave = fileChooser.getSelectedFile();
+            File fileToSave = fileChooser.getSelectedFile();
+
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
     		    PrintStream out = new PrintStream(fileToSave);
     		    String Code_content=textArea.getText();
     		    out.print(Code_content);
     		    System.out.println("Save as file: " + fileToSave.getAbsolutePath());
     		    out.close();
+
     		}
-    		
+    		Savepath=fileToSave.getParent();
+            SaveName=fileToSave.getName();
+            isSave=true;
+    		return fileToSave.getPath();
     	}catch(Exception e) {
     		JOptionPane.showMessageDialog(null, e);
     	}
-    	
+    	return null;
     }
 
     private void scan() {
@@ -240,10 +409,12 @@ public class Action extends AbstractAction {
     private  void close(){
     	JTabbedPane tabbedPane = frame.getTFile();
     	int selectedindex=tabbedPane.getSelectedIndex();
-    	tabbedPane.remove(selectedindex);
+    	if(selectedindex!=-1)
+    	    tabbedPane.remove(selectedindex);
     }
 
 }
+
 
 
 

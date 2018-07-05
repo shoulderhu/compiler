@@ -13,7 +13,8 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
     
     private JMenuBar menuBar;
     private JToolBar toolBar;
-    private JTabbedPane tabFile, tabOut,tabAssem;
+    private JTabbedPane tabFile, tabOut;
+
     private JComboBox<Integer> comboBoxSize;
     private JPanel panel;
     private JMenu menu, menu2;
@@ -33,6 +34,8 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
         menuBar = new JMenuBar();
         toolBar = new JToolBar();
         toolBar.setFloatable(false);
+        Font font = (toolBar).getFont();
+        (toolBar).setFont(new Font(font.getFontName(), font.getStyle(), 14));
 
         menuFile();
         menuEdit();
@@ -44,11 +47,14 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
         this.getContentPane().add(toolBar, BorderLayout.PAGE_START);
 
         tabFile = new JTabbedPane();
+        tabFile.setFont( new Font( "Dialog", Font.BOLD|Font.ITALIC, 16 ) );
         this.getContentPane().add(tabFile, BorderLayout.CENTER);
 
         tabOut = new JTabbedPane();
-        tabOut.addTab("Result", Text.setTextArea(false, ""));
-        tabOut.addTab("Assembly", Text.setTextArea(false, ""));
+
+        //tabOut.addTab("Tokens", new Tab_textarea.TextDemoPanel("2"));
+        //tabOut.addTab("Tokens", Text.setTextArea(false, ""));
+        //tabOut.addTab("IR", Text.setTextArea(false, ""));
         this.getContentPane().add(tabOut, BorderLayout.SOUTH);
 
         //JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, tabFile, tabOut);
@@ -101,11 +107,17 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
         toolBar.addSeparator();
     }
     private void menuCompile(){
-        Action actionRun =new Action("Run",Icons.TEST.getImage(),' ');
+        Action actionCompile =new Action("Compile",Icons.TEST.getImage(),' ');
+        Action actionAssem =new Action("Assembly",Icons.TEST.getImage(),' ');
+        Action actionExec =new Action("Execute",Icons.TEST.getImage(),' ');
+
+
         JMenu menu = new JMenu("Build");
-        menu.add(actionRun);;
+        menu.add(actionCompile);
+        menu.add(actionAssem);
+        menu.add(actionExec);
         menuBar.add(menu);
-        toolBar.add(actionRun.getButton());
+        toolBar.add(actionCompile.getButton());
         toolBar.addSeparator();
 
 
@@ -114,16 +126,19 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 
     private void menuTest() {
 
-        Action actionErr = new Action("Err", Icons.TEST.getImage(), ' ');
-        Action actionSym = new Action("Sym", Icons.TEST.getImage(), ' ');
-        Action actionScan = new Action("Scanner", Icons.TEST.getImage(), ' ');
-        Action actionParse = new Action("Parser", Icons.TEST.getImage(), ' ');
+        Action actionHello = new Action("Hello", Icons.TEST.getImage(), ' ');
+        Action actionFor = new Action("For", Icons.TEST.getImage(), ' ');
+        Action actionFunc = new Action("Func", Icons.TEST.getImage(), ' ');
+        Action actionParse = new Action("Tokens", Icons.TEST.getImage(), ' ');
+        Action actionIR = new Action("IR", Icons.TEST.getImage(), ' ');
+
 
         JMenu menu = new JMenu("Test");
-        menu.add(actionErr);
-        menu.add(actionSym);
-        menu.add(actionScan);
+        menu.add(actionHello);
+        menu.add(actionFor);
+        menu.add(actionFunc);
         menu.add(actionParse);
+        menu.add(actionIR);
         menuBar.add(menu);
     }
 
@@ -132,7 +147,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
         Integer size[] = { 8, 10, 12, 14, 16, 18, 24, 36, 48 };
         comboBoxSize = new JComboBox<>(size);
         comboBoxSize.setEditable(true);
-
+        comboBoxSize.setSelectedIndex(6);
         toolBar.add(comboBoxSize);
         toolBar.addSeparator(new Dimension(1000, 25));
 

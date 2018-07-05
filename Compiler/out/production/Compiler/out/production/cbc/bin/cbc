@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+cmd_path="$(realpath $0)"
+srcdir_root="$(dirname "$(dirname "$cmd_path")")"
+echo $cmd_path
+echo $srcdir_root
+java -classpath "$srcdir_root/lib/cbc.jar" \
+        c.compiler.Compiler \
+        -I"$srcdir_root" \
+        "$@"
