@@ -82,10 +82,10 @@ public class Action extends AbstractAction {
                 execute();
                 break;
             case "Tokens":
-                tokens(save());
+                tokens();
                 break;
             case "IR":
-                ir(save());
+                ir();
                 break;
             case "Compile&Run":
                 compile(save());
@@ -97,12 +97,12 @@ public class Action extends AbstractAction {
 
         }
     }
-    private void ir(String filepath) {
+    private void ir() {
         Runtime runtime = Runtime.getRuntime();
         JTabbedPane tabbedOut = frame.getTOut();
 
         try {
-            filepath=Savepath+"/"+SaveName;
+            String filepath=Savepath+"/"+SaveName;
             Process process = runtime.exec("./src/gui/c_dump_ir "+filepath);
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
@@ -125,12 +125,12 @@ public class Action extends AbstractAction {
     }
 
 
-    private void tokens(String filepath) {
+    private void tokens() {
         Runtime runtime = Runtime.getRuntime();
         JTabbedPane tabbedOut = frame.getTOut();
 
         try {
-            filepath=Savepath+"/"+SaveName;
+            String filepath=Savepath+"/"+SaveName;
             Process process = runtime.exec("./src/gui/c_dump_tokens "+filepath);
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
@@ -141,8 +141,7 @@ public class Action extends AbstractAction {
                 res+=string+'\n';
                 System.out.println(string);
             }
-            if(string==null)
-                tabbedOut.add("Tokens", new Tab_textarea.TextDemoPanel(res));
+            tabbedOut.add("Tokens", new Tab_textarea.TextDemoPanel(res));
         }
         catch (IOException e) {
 
@@ -234,7 +233,7 @@ public class Action extends AbstractAction {
                 res+=string+'\n';
                 System.out.println(string);
             }
-            if(res==null){
+            if(string==null){
                 res="Success Compile ..";
             }
 
