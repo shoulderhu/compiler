@@ -1,4 +1,4 @@
-.file	"/home/ubuntu/Compiler/Example/DO_WHILE.c"
+.file	"/home/ubuntu/Compiler/Example/FOR.c"
 	.section	.rodata
 .LC0:
 	.string	"%d "
@@ -11,26 +11,28 @@ main:
 	subl	$4, %esp
 	movl	$0, %eax
 	movl	%eax, -4(%ebp)
+	movl	$0, %eax
+	movl	%eax, -4(%ebp)
 .L0:
 	movl	-4(%ebp), %eax
-	pushl	%eax
+	cmpl	$10, %eax
+	setl	%al
+	movzbl	%al, %eax
+	testl	%eax, %eax
+	jnz	.L1
+	jmp	.L2
+.L1:
 	movl	$.LC0, %eax
 	pushl	%eax
 	call	printf
-	addl	$8, %esp
-.L1:
+	addl	$4, %esp
+.L3:
 	movl	-4(%ebp), %eax
 	addl	$1, %eax
 	movl	%eax, -4(%ebp)
-	movl	-4(%ebp), %eax
-	cmpl	$10, %eax
-	setle	%al
-	movzbl	%al, %eax
-	testl	%eax, %eax
-	jnz	.L0
-	jmp	.L2
+	jmp	.L0
 .L2:
-.L3:
+.L4:
 	movl	%ebp, %esp
 	popl	%ebp
 	ret

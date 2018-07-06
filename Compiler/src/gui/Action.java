@@ -76,10 +76,10 @@ public class Action extends AbstractAction {
                 compile(save());
                 break;
             case "Assembly":
-                assembly(save());
+                assembly();
                 break;
             case "Execute":
-                execute(save());
+                execute();
                 break;
             case "Tokens":
                 tokens(save());
@@ -89,7 +89,8 @@ public class Action extends AbstractAction {
                 break;
             case "Compile&Run":
                 compile(save());
-                execute(save());
+                assembly();
+                execute();
                 break;
             case "Hello":
 
@@ -150,12 +151,12 @@ public class Action extends AbstractAction {
 
     }
 
-    private void execute(String filepath) {
+    private void execute() {
         JTabbedPane tabbedOut = frame.getTOut();
 
         try {
             String[] name=SaveName.split("\\.");
-            filepath="./"+name[0];
+            String filepath="./"+name[0];
             Runtime runtime = Runtime.getRuntime();
             Process process = runtime.exec(filepath);
             BufferedReader bufferedReader = new BufferedReader(
@@ -184,13 +185,13 @@ public class Action extends AbstractAction {
         }
     }
 
-    private void assembly(String filepath) {
+    private void assembly() {
 
         JTabbedPane tabbedOut = frame.getTOut();
 
         try {
             String[] name=SaveName.split("\\.");
-            filepath="./"+name[0]+".s";
+            String  filepath="./"+name[0]+".s";
             File asm = new File(filepath);
 
             BufferedReader file = new BufferedReader(new FileReader(asm));
@@ -200,6 +201,14 @@ public class Action extends AbstractAction {
                 res+=string+'\n';
                 System.out.println(string);
             }
+            for (int i = 0; i < tabbedOut.getTabCount(); i++) {
+                String tabTitle = tabbedOut.getTitleAt(i);
+                if (tabTitle.equals("Assembly")) {
+                    tabbedOut.remove(i);
+                    break;
+                }
+            }
+
             tabbedOut.addTab("Assembly", new Tab_textarea.TextDemoPanel(res));
 
         }
@@ -219,21 +228,25 @@ public class Action extends AbstractAction {
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
 
-            String string;
+            String string,res="";
 
             while((string = bufferedReader.readLine()) != null ) {
+                res+=string+'\n';
                 System.out.println(string);
             }
-            if(string==null){
-                for (int i = 0; i < tabbedOut.getTabCount(); i++) {
-                    String tabTitle = tabbedOut.getTitleAt(i);
-                    if (tabTitle.equals("Result")) {
-                        tabbedOut.remove(i);
-                        break;
-                    }
-                }
-                tabbedOut.add("Result", new Tab_textarea.TextDemoPanel("Success Compile .."));
+            if(res==null){
+                res="Success Compile ..";
             }
+
+            for (int i = 0; i < tabbedOut.getTabCount(); i++) {
+                String tabTitle = tabbedOut.getTitleAt(i);
+                if (tabTitle.equals("Result")) {
+                    tabbedOut.remove(i);
+                    break;
+                }
+            }
+            tabbedOut.add("Result", new Tab_textarea.TextDemoPanel(res));
+
 
         }
         catch (IOException e) {
@@ -287,9 +300,7 @@ public class Action extends AbstractAction {
     }
 
     private String save()  {
-        if(isSave&&Savepath!=null){
-            return Savepath;
-        }
+
     	try {
     		JFileChooser fileChooser = new JFileChooser();
     		fileChooser.setDialogTitle("Specify a file to save");   
@@ -309,7 +320,6 @@ public class Action extends AbstractAction {
     		}
     		Savepath=fileToSave.getParent();
             SaveName=fileToSave.getName();
-            isSave=true;
     		return fileToSave.getPath();
     	}catch(Exception e) {
     		JOptionPane.showMessageDialog(null, e);
