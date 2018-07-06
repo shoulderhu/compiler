@@ -1,10 +1,5 @@
 package gui;
 
-import compiler.Parser;
-import compiler.Scanner;
-import compiler.Sym;
-import compiler.Symbol;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -73,21 +68,22 @@ public class Action extends AbstractAction {
                 ir();
                 break;
             case "Compile&Run":
-                compile(save());
-                assembly();
-                execute();
+                if(compile(save())==1){
+                    assembly();
+                    execute();
+                }
                 break;
             case "Hello":
-                open("/home/ubuntu/compiler/Compiler/Example/","HelloWorld.c");
+                open("../../../src/Example/","HelloWorld.c");
                 break;
             case "FOR":
-                open("/home/ubuntu/compiler/Compiler/Example/","FOR.c");
+                open("../../../src/Example/","FOR.c");
                 break;
             case "DO_WHILE":
-                open("/home/ubuntu/compiler/Compiler/Example/","DO_WHILE.c");
+                open("../../../src/Example/","DO_WHILE.c");
                 break;
             case "SWITH_FUNC":
-                open("/home/ubuntu/compiler/Compiler/Example/","SWITH_FUNC.c");
+                open("../../../src/Example/","SWITH_FUNC.c");
                 break;
 
         }
@@ -122,7 +118,7 @@ public class Action extends AbstractAction {
 
         try {
             String filepath=Savepath+"/"+SaveName;
-            Process process = runtime.exec("./src/gui/c_dump_ir "+filepath);
+            Process process = runtime.exec("../../../src/gui/c_dump_ir "+filepath);
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
 
@@ -150,7 +146,7 @@ public class Action extends AbstractAction {
 
         try {
             String filepath=Savepath+"/"+SaveName;
-            Process process = runtime.exec("./src/gui/c_dump_tokens "+filepath);
+            Process process = runtime.exec("../../../src/gui/c_dump_tokens "+filepath);
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
 
@@ -237,12 +233,13 @@ public class Action extends AbstractAction {
 
     }
 
-    private void compile(String filepath){
+    private int compile(String filepath){
         Runtime runtime = Runtime.getRuntime();
         JTabbedPane tabbedOut = frame.getTOut();
-
+        int result=0;
         try {
-            Process process = runtime.exec("./src/gui/c "+filepath);
+            Process process = runtime.exec("../../../src/gui/c "+filepath);
+
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
 
@@ -252,8 +249,9 @@ public class Action extends AbstractAction {
                 res+=string+'\n';
                 System.out.println(string);
             }
-            if(string==null){
+            if(string==null && !res.contains("error")){
                 res="Success Compile ..";
+                result=1;
             }
 
             for (int i = 0; i < tabbedOut.getTabCount(); i++) {
@@ -264,14 +262,14 @@ public class Action extends AbstractAction {
                 }
             }
             tabbedOut.add("Result", new Tab_textarea.TextDemoPanel(res));
-
+            return result;
 
         }
         catch (IOException e) {
 
             e.printStackTrace();
         }
-
+        return result;
     }
 
     private void newf() {
