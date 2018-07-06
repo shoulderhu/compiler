@@ -84,7 +84,6 @@ public class Action extends AbstractAction {
             case "Tokens":
                 tokens(save());
                 break;
-
             case "IR":
                 ir(save());
                 break;
@@ -92,6 +91,8 @@ public class Action extends AbstractAction {
                 compile(save());
                 execute(save());
                 break;
+            case "Hello":
+
 
         }
     }
@@ -223,14 +224,17 @@ public class Action extends AbstractAction {
             while((string = bufferedReader.readLine()) != null ) {
                 System.out.println(string);
             }
-            for (int i = 0; i < tabbedOut.getTabCount(); i++) {
-                String tabTitle = tabbedOut.getTitleAt(i);
-                if (tabTitle.equals("Result")) {
-                    tabbedOut.remove(i);
-                    break;
+            if(string==null){
+                for (int i = 0; i < tabbedOut.getTabCount(); i++) {
+                    String tabTitle = tabbedOut.getTitleAt(i);
+                    if (tabTitle.equals("Result")) {
+                        tabbedOut.remove(i);
+                        break;
+                    }
                 }
-            }
                 tabbedOut.add("Result", new Tab_textarea.TextDemoPanel("Success Compile .."));
+            }
+
         }
         catch (IOException e) {
 
