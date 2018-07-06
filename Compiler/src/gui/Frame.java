@@ -110,14 +110,17 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
         Action actionCompile =new Action("Compile",Icons.TEST.getImage(),' ');
         Action actionAssem =new Action("Assembly",Icons.TEST.getImage(),' ');
         Action actionExec =new Action("Execute",Icons.TEST.getImage(),' ');
+        Action actionRun =new Action("Compile&Run",Icons.TEST.getImage(),' ');
 
 
         JMenu menu = new JMenu("Build");
+        menu.add(actionRun);
         menu.add(actionCompile);
         menu.add(actionAssem);
         menu.add(actionExec);
+
         menuBar.add(menu);
-        toolBar.add(actionCompile.getButton());
+        toolBar.add(actionRun.getButton());
         toolBar.addSeparator();
 
 
@@ -127,17 +130,23 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
     private void menuTest() {
 
         Action actionHello = new Action("Hello", Icons.TEST.getImage(), ' ');
-        Action actionFor = new Action("For", Icons.TEST.getImage(), ' ');
-        Action actionFunc = new Action("Func", Icons.TEST.getImage(), ' ');
-        Action actionParse = new Action("Tokens", Icons.TEST.getImage(), ' ');
+        Action actionFor = new Action("FOR", Icons.TEST.getImage(), ' ');
+        Action actionDowhile = new Action("DO_WHILE", Icons.TEST.getImage(), ' ');
+        //Action actionFor = new Action("FOR", Icons.TEST.getImage(), ' ');
+        //Action actionFor = new Action("FOR", Icons.TEST.getImage(), ' ');
+
+        Action actionFunc = new Action("SWITH_FUNC", Icons.TEST.getImage(), ' ');
+        Action actionTokens = new Action("Tokens", Icons.TEST.getImage(), ' ');
         Action actionIR = new Action("IR", Icons.TEST.getImage(), ' ');
 
 
         JMenu menu = new JMenu("Test");
         menu.add(actionHello);
         menu.add(actionFor);
+        menu.add(actionDowhile);
         menu.add(actionFunc);
-        menu.add(actionParse);
+
+        menu.add(actionTokens);
         menu.add(actionIR);
         menuBar.add(menu);
     }

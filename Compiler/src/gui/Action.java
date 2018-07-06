@@ -54,21 +54,6 @@ public class Action extends AbstractAction {
             case "Save":
                 save();
                 break;
-            case "Cut":
-                cut();
-                break;
-            case "Copy":
-                copy();
-                break;
-            case "Paste":
-                paste();
-                break;
-            case "Scanner":
-                scan();
-                break;
-            case "Parser":
-                parse();
-                break;
             case "Close":
                 close();
                 break;
@@ -93,10 +78,44 @@ public class Action extends AbstractAction {
                 execute();
                 break;
             case "Hello":
-
+                open("/home/ubuntu/compiler/Compiler/Example/","HelloWorld.c");
+                break;
+            case "FOR":
+                open("/home/ubuntu/compiler/Compiler/Example/","FOR.c");
+                break;
+            case "DO_WHILE":
+                open("/home/ubuntu/compiler/Compiler/Example/","DO_WHILE.c");
+                break;
+            case "SWITH_FUNC":
+                open("/home/ubuntu/compiler/Compiler/Example/","SWITH_FUNC.c");
+                break;
 
         }
     }
+    private void open(String path,String name){
+        try {
+            BufferedInputStream stream = new BufferedInputStream(
+                    new FileInputStream(path+name));
+
+            byte b[] = new byte[stream.available()];
+            String str = new String(b, 0, stream.read(b));
+
+            JTabbedPane tabbedPane = frame.getTFile();
+            tabbedPane.addTab(name,
+                    Text.setTextArea(true, str));
+            Font font = Text.getTextArea(tabbedPane).getFont();
+            Text.getTextArea(tabbedPane).setFont(new Font(font.getFontName(), font.getStyle(), 24));
+            Text.getTextArea(tabbedPane).setTabSize(2);
+            tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
+
+            stream.close();
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
+        }
+    }
+
     private void ir() {
         Runtime runtime = Runtime.getRuntime();
         JTabbedPane tabbedOut = frame.getTOut();
@@ -326,99 +345,9 @@ public class Action extends AbstractAction {
     	return null;
     }
 
-    private void scan() {
-
-        //frame.getTOut().setSelectedIndex(0);
-        //JTextArea textArea = Text.getTextArea(frame.getTOut());
-        //Document document = new DefaultStyledDocument();
-
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-
-                Scanner scanner = new Scanner(Text.getText(frame.getTFile()));
-                Symbol symbol = scanner.nextToken();
-
-                while(symbol.getSym() != Sym.EOF) {
-
-                    System.out.println("\t" + symbol.toString());
-            /*textArea.append();
-
-            try{
-                document.insertString(document.getLength(), "\t" + symbol.toString() + "\n",
-                        null);
-
-            }catch (BadLocationException e) {
-
-                e.printStackTrace();
-            }
-
-            textArea.setDocument(document);
-            */
-                    symbol = scanner.nextToken();
-                }
-            }
-        }).start();
-    }
-
-    private void parse() {
-
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-
-                System.out.println("start");
-                Parser parser = new Parser(new Scanner(Text.getText(frame.getTFile())));
-                parser.parse();
-                System.out.println("done");
-            }
-        }).start();
-    }
-
-    private void cut() {
-    	String ret = "";
-        Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
-
-        Transferable clipTf = sysClip.getContents(null);
-
-        if (clipTf != null) {
-
-            if (clipTf.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                try {
-                    ret = (String) clipTf
-                            .getTransferData(DataFlavor.stringFlavor);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        JTabbedPane tabbedPane = frame.getTFile();
-    	JTextArea textArea = Text.getTextArea(tabbedPane);
-        
-
-    }
 
 
-    private void copy() {
-    	JTabbedPane tabbedPane = frame.getTFile();
-    	JTextArea textArea = Text.getTextArea(tabbedPane);
-        
-    	if (textArea.getSelectedText() != null) { // See if they selected something 
-            String s = textArea.getSelectedText();
-            Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-            Transferable tText = new StringSelection(textArea.getText());
-            clip.setContents(tText, null);
-        }
-    	
 
-    }
-
-    private void paste() {
-
-
-    }
     private  void close(){
     	JTabbedPane tabbedPane = frame.getTFile();
     	int selectedindex=tabbedPane.getSelectedIndex();

@@ -12,6 +12,6 @@ void func(int x){
 }
 int main(void){
 	int a=0;
-	
+	func(a);
 
 }
